@@ -12,6 +12,7 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
+  import { Alert } from '@/components/ui/alert'
   import { Eye, EyeOff } from 'lucide-react' 
 import { Label } from '@/components/ui/label'
   
@@ -23,7 +24,7 @@ function Signup() {
     const [pendingVerification, setPendingVerification] = useState(false)
     const [code, setCode] = useState("")
     const [error, setError] = useState("")
-    const [showPassword, setShowPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
     const router = useRouter()
 
