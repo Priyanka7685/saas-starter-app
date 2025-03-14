@@ -1,5 +1,6 @@
-import {clerkMiddleware, clerkClient, createRouteMatcher, getAuth } from '@clerk/nextjs/server'
+import {clerkMiddleware, createRouteMatcher, currentUser} from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server';
+import { clerkClient } from '@clerk/clerk-sdk-node';
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -9,7 +10,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth,req) => {
-  const { userId } = getAuth(req);
+  const { userId } = await auth();
 
   if(!isPublicRoute(req) && !userId) {
     // If the route is protected and the user is not authenticated, redirect to sign-in
@@ -18,8 +19,8 @@ export default clerkMiddleware(async (auth,req) => {
 
   if(userId) {
      try {
-      const user = (await clerkClient()).users.getUser(userId);
-      const role = (await user).publicMetadata.role as string | undefined
+      const user = await clerkClient.users.getUser(userId);
+      const role =   user.publicMetadata.role as string | undefined
  
      //  admin role redirection
      if(role === 'admin' && req.nextUrl.pathname === '/dashboard') {
@@ -58,5 +59,6 @@ export const config = {
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
+   
   ],
 }
