@@ -42,4 +42,34 @@ export async function POST(req: Request) {
     // extracting data
     const {id} = evt.data
     const eventType = evt.type
+
+    if(eventType === 'user.created') {
+        try {
+            const { email_addresses, primary_email_address_id } = evt.data
+            // log
+            const primaryEmail = email_addresses.find(
+                // optional
+                (email) => email.id === primary_email_address_id
+            )
+
+            if(!primaryEmail) {
+                return new Response("No primary rmail found", {status: 401})
+            }
+
+            // creating user in neon(postgrsql)
+            const newUser = await prisma.user.create({
+                data: {
+                    id: evt.data.id!,
+                    email: primaryEmail.email_address,
+                    isSubscribed: false
+                }
+            })
+            console.log("New user created", newUser);
+            
+        } catch (error) {
+            return new Response("Error occured", {status: 400})
+        }
+    }
+
+    return new Response("Webhook received successfully", {status: 200})
 }
