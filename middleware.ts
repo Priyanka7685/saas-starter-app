@@ -1,18 +1,21 @@
-import {clerkMiddleware, createRouteMatcher, currentUser} from '@clerk/nextjs/server'
+import {clerkMiddleware} from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 
-const isPublicRoute = createRouteMatcher([
+const isPublicRoute = [
   "/",
   "/api/webhook/register",
   "/sign-up",
   "/sign-in"
-]);
+];
+console.log("NEXT_PUBLIC_CLERK_FRONTEND_API:", process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY);
 
-export default clerkMiddleware(async (auth,req) => {
-  const { userId } = await auth();
+export default clerkMiddleware(async (req) => {
+  const { userId } = req.auth?.userId ;
 
-  if(!isPublicRoute(req) && !userId) {
+  // redirecting unauthenticated users on protected users
+  if(!isPublicRoute.includes(req.nextUrl.pathname) && !userId) {
     // If the route is protected and the user is not authenticated, redirect to sign-in
     return NextResponse.redirect(new URL('/sign-in', req.url));
   }
@@ -33,7 +36,7 @@ export default clerkMiddleware(async (auth,req) => {
    }
  
    // 
-   if(isPublicRoute(req)) {
+   if(isPublicRoute.includes(req.nextUrl.pathname)) {
      return NextResponse.redirect(
        new URL(
          role === "admin" ? "/admin/dashboard" : "/dashboard",
@@ -55,10 +58,12 @@ export default clerkMiddleware(async (auth,req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
+    // // Skip Next.js internals and all static files, unless found in search params
+    // '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // // Always run for API routes
+    // '/(api|trpc)(.*)',
+    "/((?!_next|.*\\..*).*)", // Protect all routes except static files
+    "/api/(.*)", // Protect all API routes
    
   ],
 }

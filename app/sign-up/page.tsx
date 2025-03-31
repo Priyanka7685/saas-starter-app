@@ -88,7 +88,7 @@ function Signup() {
       <Card className='w-full max-w-md'>
         <CardHeader>
           <CardTitle className='text-2xl font-bold text-center'>
-            Sign In to Todo Master
+            Sign Up to Todo Master
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -126,16 +126,17 @@ function Signup() {
             {error && (
               <Alert variant="destructive"></Alert>
             )}
-            <Button type='submit' className='w-full'>Sign In</Button>
+            <Button type='submit' className='w-full'><Link
+            href="/sign-in">Verify Email</Link></Button>
           </form>
         </CardContent>
         <CardFooter className='justify-center'>
           <p className='text-sm text-muted-foreground'>
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <Link
-            href="/sign-up"
+            href="/sign-in"
             className='font-medium text-primary hover:underline'
-            >Sign up</Link>
+            >Sign In</Link>
           </p>
         </CardFooter>
       </Card>
