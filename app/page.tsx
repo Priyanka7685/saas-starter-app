@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { currentUser, getAuth} from "@clerk/nextjs/server";
-import { Clock, Facebook, Github, Link, List, Twitter, Users } from "lucide-react";
+import { auth} from "@clerk/nextjs/server";
+import { Clock, Facebook, Github, List, Twitter, Users } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
 
-  const userId = await currentUser();
+  const {userId} = await auth();
 
   if(userId) {
     redirect("/dashboard")

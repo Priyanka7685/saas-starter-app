@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-  import { Alert } from '@/components/ui/alert'
+  import { Alert, AlertDescription } from '@/components/ui/alert'
   import { Eye, EyeOff } from 'lucide-react' 
 import { Label } from '@/components/ui/label'
   
@@ -31,7 +31,7 @@ function Signup() {
 
   if(!isLoaded) {
     return null;
-  }
+  } 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     if(!isLoaded) {
@@ -75,6 +75,8 @@ function Signup() {
         await setActive({session: completeSignup.createdSessionId})
         router.push("/dashboard")
         
+      }else {
+        console.log("Verification incomplete:", completeSignup)
       }
     } catch (error: any) {
       console.log(JSON.stringify(error, null, 2));
@@ -92,6 +94,7 @@ function Signup() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+        {!pendingVerification ? (
           <form onSubmit={submit} className='space-y-4'>
             <div className='space-y-2'>
               <Label htmlFor="email">Email</Label>
@@ -124,11 +127,31 @@ function Signup() {
               </div>
             </div>
             {error && (
-              <Alert variant="destructive"></Alert>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
-            <Button type='submit' className='w-full'><Link
-            href="/sign-in">Verify Email</Link></Button>
+            <Button type='submit' className='w-full'>Sign Up</Button>
           </form>
+        ) : (
+            <form onSubmit={onPressVerify} className='space-y-4'>
+              <div className='space-y-2'>
+                <Label htmlFor='code'>Enter Verification Code</Label>
+                <Input
+                  id='code'
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  required
+                />
+              </div>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <Button type='submit' className='w-full'>Verify Email</Button>
+            </form>
+          )}
         </CardContent>
         <CardFooter className='justify-center'>
           <p className='text-sm text-muted-foreground'>

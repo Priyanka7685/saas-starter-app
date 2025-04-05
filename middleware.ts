@@ -1,5 +1,5 @@
 import {clerkMiddleware} from '@clerk/nextjs/server'
-import { NextRequest, NextResponse } from 'next/server';
+import {  NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 
 const isPublicRoute = [
@@ -8,11 +8,9 @@ const isPublicRoute = [
   "/sign-up",
   "/sign-in"
 ];
-console.log("NEXT_PUBLIC_CLERK_FRONTEND_API:", process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-  console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY);
 
-export default clerkMiddleware(async (req) => {
-  const { userId } = req.auth?.userId ;
+export default clerkMiddleware(async(auth,req) => {
+  const {userId} = await auth();
 
   // redirecting unauthenticated users on protected users
   if(!isPublicRoute.includes(req.nextUrl.pathname) && !userId) {

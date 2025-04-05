@@ -33,7 +33,7 @@ export async function GET(req: NextResponse) {
             where: {
                 userId,
                 title: {
-                    contains: "search",
+                    contains: search,
                     mode: "insensitive"
                 }
             }
@@ -71,8 +71,10 @@ export async function POST(req: NextRequest) {
 
     if(!user) {
         return NextResponse.json({error: "User not found"},{status: 404})
+    
     }
 
+    // limited todos
     if(!user.isSubscribed && user.todos.length >= 3) {
         return NextResponse.json({
             error: "Free users can only create upto 3 todos. Please subscribe to paid plans to get more todod"
@@ -80,6 +82,10 @@ export async function POST(req: NextRequest) {
     }
 
     const {title} = await req.json()
+    if (!title || typeof title !== "string") {
+        return NextResponse.json({ error: "Invalid title" }, { status: 400 });
+      }
+
     const todo = await prisma.todo.create({
         data: {title, userId}
     })

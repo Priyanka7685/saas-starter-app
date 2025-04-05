@@ -44,12 +44,12 @@ function SignIn() {
 
             if(result.status === "complete") {
                 await setActive({session: result.createdSessionId})
-                router.push("/dahsboard")
+                router.push("/dashboard")
             } else {
                 console.log(JSON.stringify(result, null, 2))
             }
         } catch (error: any) {
-            console.error("Error", error.errors[0].message);
+            console.log("Error", error.errors[0].message);
             setError(error.errors[0].message) // means grabbing message from first element i.e. active error
         }
       }
