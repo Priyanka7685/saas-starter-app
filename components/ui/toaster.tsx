@@ -1,6 +1,6 @@
 "use client"
 
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import {
   Toast,
@@ -10,7 +10,9 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast"
+
 import { Button } from "@/components/ui/button"
+
 
 export function Toaster() {
     const [toasts, setToasts] = useState<{ 
@@ -35,13 +37,14 @@ const removeToast = (id: number) => {
 }
   return (
     <ToastProvider>
-        <Button
+        <Button className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100]"
         onClick={() =>
           addToast("Success", "Your action was completed successfully.")
         }
       >
         Show Toast
       </Button>
+      
       {toasts.map(function ({ id, title, description}) {
         return (
           <Toast key={id} onOpenChange={() => removeToast(id)}>
@@ -55,11 +58,11 @@ const removeToast = (id: number) => {
           </Toast>
         )
       })}
-      <ToastViewport />
+      {/* <ToastViewport className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100]"/> */}
     </ToastProvider>
   )
 }
 
-function removeToast(arg0: number): void {
-    throw new Error("Function not implemented.");
-}
+// function removeToast(arg0: number): void {
+//     throw new Error("Function not implemented.");
+// }

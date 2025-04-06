@@ -42,9 +42,11 @@ function SignIn() {
                 identifier: emailAddress, password
             })
 
+            console.log("Sign-in result:", result);
+
             if(result.status === "complete") {
                 await setActive({session: result.createdSessionId})
-                router.push("/dashboard")
+                router.push("/dashboard") 
             } else {
                 console.log(JSON.stringify(result, null, 2))
             }
@@ -98,7 +100,7 @@ function SignIn() {
                         </Alert>
                     )}
                     <Button type='submit' className='w-full'>
-                        Sign In
+                      Sign In
                     </Button>
                 </form>
             </CardContent>

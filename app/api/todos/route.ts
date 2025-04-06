@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { clerkClient } from "@clerk/clerk-sdk-node"
 
 const ITEMS_PER_PAGE = 10
 
-export async function GET(req: NextResponse) {
+export async function GET(req: NextRequest) {
     const { userId } = await auth()
 
     if(!userId) {
@@ -12,7 +13,7 @@ export async function GET(req: NextResponse) {
     }
 
     const { searchParams } = new URL(req.url)
-    const page = parseInt(searchParams.get("Page") || "1")
+    const page = parseInt(searchParams.get("page") || "1")
     const search = searchParams.get("search") || ""
 
     try {
@@ -64,13 +65,30 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Unauthorized"}, {status: 404})
     }
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
         where: {id: userId},
         include: {todos: true}
     })
+    console.log("User:", user);
 
     if(!user) {
-        return NextResponse.json({error: "User not found"},{status: 404})
+        // return NextResponse.json({error: "User not found"},{status: 404})
+
+        // important to do this because we need to create user manually in db(neondb)
+        if (!user) {
+            const clerkUser = await clerkClient.users.getUser(userId);
+            const email = clerkUser.emailAddresses[0].emailAddress;
+          
+            user = await prisma.user.create({
+              data: {
+                id: userId,
+                email,
+                isSubscribed: false,
+              },
+              include: { todos: true },
+            });
+          }
+          
     
     }
 
@@ -86,9 +104,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid title" }, { status: 400 });
       }
 
+
     const todo = await prisma.todo.create({
         data: {title, userId}
     })
+    console.log("Todo created:", todo)
 
-    return NextResponse.json(todo, {status:200})
+    return NextResponse.json(
+        { message: "Todo added successfully", todo },
+        { status: 200 }
+    )
 }
