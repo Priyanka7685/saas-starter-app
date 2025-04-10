@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState } from 'react'
 import { useSignIn } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
@@ -45,6 +46,7 @@ function SignIn() {
             console.log("Sign-in result:", result);
 
             if(result.status === "complete") {
+
                 await setActive({session: result.createdSessionId})
                 router.push("/dashboard") 
             } else {

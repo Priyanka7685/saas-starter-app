@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,13 @@ interface TodoFormProps {
 
 export function TodoForm({ onSubmit }: TodoFormProps) {
   const [title, setTitle] = useState("");
+
+  // to prevent hydration error
+  const [hasMounted, setHasMounted] = useState(false)
+
+  useEffect(() => setHasMounted(true), []);
+
+  if(!hasMounted) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

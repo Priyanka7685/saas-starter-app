@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { LogOut, CreditCard } from "lucide-react";
@@ -15,6 +16,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 export default function Navbar() {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const [hasMounted, setHasMounted] = useState(false)
+
+  useEffect(() => {
+    setHasMounted(true);
+  },[])
+
+  if(!hasMounted)
+    return null;     //Prevents hydration match
 
   return (
     <nav className="bg-background border-b">

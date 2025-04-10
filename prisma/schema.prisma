@@ -19,6 +19,7 @@ model User {
   isSubscribed     Boolean   @default(false)
   subscriptionEnds DateTime?
   todos            Todo[] //connecting with another model
+  role             String @default("user")
 }
 
 model Todo {

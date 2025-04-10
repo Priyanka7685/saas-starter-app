@@ -15,12 +15,14 @@ interface UserWithTodos extends User {
 }
 
 export default function AdminDashboard() {
+  
     const [email, setEmail] = useState("")
     const [debounceEmail, setDebounceEmail] = useDebounceValue("", 300)
     const [loading, setIsLoading] = useState(false)
     const [user, setUser] = useState<UserWithTodos | null>(null)
     const [totalPages, setTotalPages] = useState(1)
     const [currentPage, setCurrentPage] = useState(1)
+    
 
 
     // fetching user data
@@ -28,7 +30,7 @@ export default function AdminDashboard() {
         setIsLoading(true)
 
         try {
-            const response = await fetch(`/api/admin?email?${debounceEmail}&page=${page}`);
+            const response = await fetch(`/api/admin?email=${debounceEmail}&page=${page}`);
 
             if(!response.ok) {
                 throw new Error("Failed to fetch user data");
@@ -182,10 +184,10 @@ export default function AdminDashboard() {
                     Subscription Status:{" "}
                     {user.isSubscribed ? "Subscribed" : "Not Subscribed"}
                   </p>
-                  {user.subscriptionEnds && (
+                  { user.subscriptionEnds && (
                     <p>
                       Subscription Ends:{" "}
-                      {new Date(user.subscriptionEnds).toLocaleDateString()}
+                      {new Date(user.subscriptionEnds).toISOString().slice(0, 10)}
                     </p>
                   )}
                   <Button onClick={handleUpdateSubscription} className="mt-2">

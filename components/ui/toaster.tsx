@@ -1,7 +1,5 @@
 "use client"
 
-import { useToast } from "@/hooks/use-toast"
-import { useState } from "react"
 import {
   Toast,
   ToastClose,
@@ -11,58 +9,26 @@ import {
   ToastViewport,
 } from "@/components/ui/toast"
 
-import { Button } from "@/components/ui/button"
-
+import { useToast } from "@/hooks/use-toast"    //to get notifications on screen , have to use toast from hooks/use-toast
 
 export function Toaster() {
-    const [toasts, setToasts] = useState<{ 
-      id: number; 
-      title?: string; 
-      description?: string; 
-    }[]>([]);
+  const { toasts } = useToast()
 
-//   Function to add toast
-const addToast = (title: string, description: string) => {
-    setToasts((prev: any) => [
-        ...prev,
-        { id: Date.now(), title, description }
-    ])
-    setTimeout(() => removeToast(Date.now()), 3000)
-}
-
-// Function to remove toast
-const removeToast = (id: number) => {
-    setToasts((prev: any) => prev.filter((toast: { id: number; }) => toast.id !== id)
-)
-}
   return (
     <ToastProvider>
-        <Button className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100]"
-        onClick={() =>
-          addToast("Success", "Your action was completed successfully.")
-        }
-      >
-        Show Toast
-      </Button>
-      
-      {toasts.map(function ({ id, title, description}) {
-        return (
-          <Toast key={id} onOpenChange={() => removeToast(id)}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            <ToastClose />
-          </Toast>
-        )
-      })}
-      {/* <ToastViewport className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100]"/> */}
+      {toasts.map((toast) => (
+        <Toast key={toast.id} {...toast}>
+          <div className="grid gap-1">
+            {toast.title && <ToastTitle>{toast.title}</ToastTitle>}
+            {toast.description && (
+              <ToastDescription>{toast.description}</ToastDescription>
+            )}
+          </div>
+          <ToastClose />
+        </Toast>
+      ))}
+      <ToastViewport className="fixed top-4 left-1/2 -translate-x-1/2 z-[100]" />
     </ToastProvider>
   )
 }
 
-// function removeToast(arg0: number): void {
-//     throw new Error("Function not implemented.");
-// }

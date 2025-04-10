@@ -30,8 +30,8 @@ export default function RootLayout({
       <body
         className={inter.className}
       >
-        {children}
         <Toaster/>
+        {children}
       </body>
     </html>
     </ClerkProvider>
